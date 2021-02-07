@@ -1,10 +1,13 @@
 package dad.javafx.couchDBBitcoin;
 
+import java.util.Optional;
+
 import org.ektorp.CouchDbConnector;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dad.javafx.model.ApiBitcoin;
+import dad.javafx.model.CouchBitcoin;
 import dad.javafx.utils.Connection;
 
 public class Main {
@@ -23,8 +26,9 @@ public class Main {
 		
 		connector = c.connectToDatabase("Bitcoin");				
 		
-		connector.create(c.getAPIBitcoinCurrent().get());
-		
+		Optional<ApiBitcoin> maybeBitcoin = c.getAPIBitcoinCurrent();
+		if (maybeBitcoin.isPresent())
+			connector.create(new CouchBitcoin(maybeBitcoin.get()));		
 	}
 
 }
