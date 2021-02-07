@@ -18,8 +18,10 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
     "chartName",
     "bpi"
 })
-public class Example {
+public class ApiBitcoin {
 
+    @JsonProperty("_id")  private String id;
+    @JsonProperty("_rev") private String revision;
     @JsonProperty("time")
     private Time time;
     @JsonProperty("disclaimer")
@@ -35,7 +37,7 @@ public class Example {
      * No args constructor for use in serialization
      * 
      */
-    public Example() {
+    public ApiBitcoin() {
     }
 
     /**
@@ -45,8 +47,9 @@ public class Example {
      * @param time
      * @param disclaimer
      */
-    public Example(Time time, String disclaimer, String chartName, Bpi bpi) {
+    public ApiBitcoin(Time time, String disclaimer, String chartName, Bpi bpi) {
         super();
+        this.id = "1";
         this.time = time;
         this.disclaimer = disclaimer;
         this.chartName = chartName;
@@ -102,8 +105,20 @@ public class Example {
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
     }
+    
+    public String getId() {
+		return id;
+	}
 
-    @Override
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getRevision() {
+		return revision;
+	}
+
+	@Override
     public String toString() {
         return new ToStringBuilder(this).append("time", time).append("disclaimer", disclaimer).append("chartName", chartName).append("bpi", bpi).append("additionalProperties", additionalProperties).toString();
     }
