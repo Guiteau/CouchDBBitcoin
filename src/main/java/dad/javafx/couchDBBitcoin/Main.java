@@ -20,8 +20,6 @@ public class Main {
 		
 		CouchDbConnector connector;
 		
-		c.connecToCouchDB();
-		c.connectToDatabase("persons");
 		System.out.println(c.getAPIBitcoinCurrent());
 		
 		connector = c.connectToDatabase("Bitcoin");			
