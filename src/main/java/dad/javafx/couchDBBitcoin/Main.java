@@ -24,11 +24,18 @@ public class Main {
 		c.connectToDatabase("persons");
 		System.out.println(c.getAPIBitcoinCurrent());
 		
-		connector = c.connectToDatabase("Bitcoin");				
+		connector = c.connectToDatabase("Bitcoin");			
+		
 		
 		Optional<ApiBitcoin> maybeBitcoin = c.getAPIBitcoinCurrent();
-		if (maybeBitcoin.isPresent())
-			connector.create(new CouchBitcoin(maybeBitcoin.get()));		
+		if (maybeBitcoin.isPresent()) {
+			
+			CouchBitcoin cBitcoin = new CouchBitcoin(maybeBitcoin.get());
+			
+			System.out.println(cBitcoin);
+			connector.create(cBitcoin);
+		}
+
 	}
 
 }

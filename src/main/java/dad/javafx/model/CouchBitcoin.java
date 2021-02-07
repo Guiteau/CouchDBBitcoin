@@ -1,13 +1,16 @@
 package dad.javafx.model;
 
-import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-//@JsonWriteNullProperties(false)
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties({ "id", "revision" })
 public class CouchBitcoin {
+	
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	
 	@JsonProperty("_id")
 	private String id;
 
@@ -64,8 +67,10 @@ public class CouchBitcoin {
 
 	private double usd;
 	private double euros;
-
+	
+	
 	public CouchBitcoin(ApiBitcoin apibitcoin) {
+		
 		time = apibitcoin.getTime();
 		usd = apibitcoin.getBpi().getUSD().getRateFloat();
 		euros = apibitcoin.getBpi().getEUR().getRateFloat();

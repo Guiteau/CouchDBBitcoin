@@ -49,7 +49,6 @@ public class ApiBitcoin {
      */
     public ApiBitcoin(Time time, String disclaimer, String chartName, Bpi bpi) {
         super();
-        this.id = "1";
         this.time = time;
         this.disclaimer = disclaimer;
         this.chartName = chartName;
