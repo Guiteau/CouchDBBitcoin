@@ -106,7 +106,7 @@ public class Connection implements Runnable {
 	public void connecToCouchDB() {
 
 		try {
-			httpClient = new StdHttpClient.Builder().url("http://127.0.0.1:5984").username("admin").password("admin")
+			httpClient = new StdHttpClient.Builder().url("http://127.0.0.1:5984").username("admin").password("sofasito")
 					.build();
 		} catch (MalformedURLException e) {
 

@@ -69,8 +69,15 @@ public class CouchBitcoin {
 	private double euros;
 	
 	
+	public CouchBitcoin()
+	{}
+	
 	public CouchBitcoin(ApiBitcoin apibitcoin) {
-		
+			loadFromApiBitcoin(apibitcoin);	
+	}
+	
+	public void loadFromApiBitcoin(ApiBitcoin apibitcoin)
+	{
 		time = apibitcoin.getTime();
 		usd = apibitcoin.getBpi().getUSD().getRateFloat();
 		euros = apibitcoin.getBpi().getEUR().getRateFloat();
