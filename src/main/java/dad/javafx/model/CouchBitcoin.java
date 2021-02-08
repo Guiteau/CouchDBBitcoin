@@ -10,19 +10,34 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class CouchBitcoin {
 	
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	
+	/*
 	@JsonProperty("_id")
 	private String id;
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	*/
+	
+	@JsonProperty("_id")
+	private final String cid = "current_value";
 
+	public String getCid()
+	{
+		return cid;
+	}
+	
+	
+	
 	@JsonProperty("_rev")
 	private String revision;
 
 	private Time time;
 
-	public String getId() {
-		return id;
-	}
-
+	
+	
 	public String getRevision() {
 		return revision;
 	}
@@ -37,10 +52,6 @@ public class CouchBitcoin {
 
 	public double getEuros() {
 		return euros;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public void setRevision(String revision) {
@@ -61,7 +72,7 @@ public class CouchBitcoin {
 
 	@Override
 	public String toString() {
-		return "CouchBitcoin [id=" + id + ", revision=" + revision + ", time=" + time + ", usd=" + usd + ", euros="
+		return "CouchBitcoin [id=" + cid + ", revision=" + revision + ", time=" + time + ", usd=" + usd + ", euros="
 				+ euros + "]";
 	}
 

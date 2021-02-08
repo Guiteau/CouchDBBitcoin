@@ -23,6 +23,8 @@ public class App extends Application{
 		primaryStage.setTitle("Proyecto CouchDB\t");
 		primaryStage.show();
 		
+		
+	
 	}
 	
 	public static void main(String[] args) {

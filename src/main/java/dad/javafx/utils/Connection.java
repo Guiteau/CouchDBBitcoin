@@ -20,21 +20,27 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 import dad.javafx.model.ApiBitcoin;
+import dad.javafx.model.BitcoinRepository;
 import dad.javafx.model.Bpi;
 import dad.javafx.model.CouchBitcoin;
 
-public class Connection implements Runnable {
+public class Connection{
 
 	@JsonIgnoreProperties(ignoreUnknown = true)
 
 	private HttpClient httpClient;
 	private ObjectMapper objectMapper;
 	private CouchDbConnector connector;
+	private BitcoinRepository br;
+	private CouchBitcoin current_value;
 
 	public Connection() {
 
 		objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		this.connecToCouchDB();
 
+		connector = this.connectToDatabase("bitcoin");
+		br = new BitcoinRepository(connector);
 	}
 
 	private Optional<ApiBitcoin> getAPIBitcoinCurrent() {
@@ -123,34 +129,50 @@ public class Connection implements Runnable {
 
 	}
 
-	public void subirValorBitcoinCouch(ApiBitcoin apiBitcoin) {
+	private void subirValorBitcoinCouch(ApiBitcoin apiBitcoin) {
+		CouchBitcoin cb = br.get("current_value");
 
-		// TODO COMPLETAR
-
-		apiBitcoin.getBpi().getEUR();
+		cb.loadFromApiBitcoin(apiBitcoin);
+		
+		br.update(cb);
+		
+		System.out.println(cb);
 
 	}
 
-	@Override
+	public CouchBitcoin bajandoDatosdeCouchDB()
+	{
+		
+		return current_value;
+	}
+	
+	public void updatingCouchBitcoin()
+	{
+		while(true)
+		{
+			current_value = br.get("current_value");
+		}
+	}
+	
+
 	public void run() {
 
 		Optional<ApiBitcoin> maybeBitcoin;
+		
 
-		this.connecToCouchDB();
+		
 
-		connector = this.connectToDatabase("bitcoin");
-
+		
+		
+		br.add(new CouchBitcoin());
+		
 		while (true) {
 
 			try {
 				maybeBitcoin = this.getAPIBitcoinCurrent();
-				if (maybeBitcoin.isPresent()) {
-
-					CouchBitcoin cBitcoin = new CouchBitcoin(maybeBitcoin.get());
-
-					System.out.println(cBitcoin);
-					connector.create(cBitcoin);
-				}
+				
+				if (maybeBitcoin.isPresent())
+					subirValorBitcoinCouch(maybeBitcoin.get());
 
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {

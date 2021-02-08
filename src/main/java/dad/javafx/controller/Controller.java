@@ -5,6 +5,13 @@ import java.net.URL;
 import java.util.Calendar;
 import java.util.ResourceBundle;
 
+import dad.javafx.model.BitcoinRepository;
+import dad.javafx.model.CouchBitcoin;
+import dad.javafx.utils.Connection;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -15,11 +22,19 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.util.converter.DoubleStringConverter;
 
 public class Controller implements Initializable {
 
+	private Connection connection;
 	@FXML
 	private GridPane root;
+	
+	
+	private Task<Void> taskUploadValue;
+	private Task<Void> taskGetValue;
+	
+	private ObjectProperty<CouchBitcoin> couchbitcoin_property;
 
 	@FXML
 	private LineChart<Number, Number> lineChart_bitcoins;
@@ -55,8 +70,51 @@ public class Controller implements Initializable {
 
 		series = new XYChart.Series<>();
 		
-
+		connection = new Connection();
+		textField_inversion.textProperty().bind(new SimpleStringProperty(String.valueOf(couchbitcoin_property.get().getEuros())));
+		
 	}
+	
+    @FXML
+    void on_start(ActionEvent event) {
+    	taskUploadValue = new Task<Void>() {
+
+			@Override
+			protected Void call() throws Exception {
+				connection.run();
+				
+				return null;
+			}
+    		
+		};
+		
+		taskGetValue = new Task<Void>()
+		{
+			@Override
+			protected Void call() throws Exception {
+				couchbitcoin_property.set(connection.bajandoDatosdeCouchDB());
+				connection.updatingCouchBitcoin();
+				return null;
+			}
+		};
+		
+		taskUploadValue.exceptionProperty().addListener((observable, oldValue, newValue) ->  {
+			  if(newValue != null) {
+			    Exception ex = (Exception) newValue;
+			    ex.printStackTrace();
+			  }
+			});
+		
+		taskGetValue.exceptionProperty().addListener((observable, oldValue, newValue) ->  {
+			  if(newValue != null) {
+			    Exception ex = (Exception) newValue;
+			    ex.printStackTrace();
+			  }
+			});
+
+		new Thread(taskUploadValue).start();
+		new Thread(taskGetValue).start();
+    }
 
 	public void fillData(Double value, Double time) {
 
