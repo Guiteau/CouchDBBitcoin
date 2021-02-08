@@ -12,10 +12,11 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/15.0.1">
+<GridPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+      <ColumnConstraints />
   </columnConstraints>
   <rowConstraints>
     <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
@@ -27,10 +28,10 @@
    <children>
       <LineChart fx:id="lineChart_bitcoins" GridPane.columnSpan="3" GridPane.rowSpan="2">
         <xAxis>
-          <CategoryAxis fx:id="axisY_lineChart" side="BOTTOM" />
+          <CategoryAxis fx:id="axisX_lineChart" side="BOTTOM" />
         </xAxis>
         <yAxis>
-          <NumberAxis fx:id="axisX_lineChart" side="LEFT" />
+          <NumberAxis fx:id="axisY_lineChart" label="Bitcoin value" side="LEFT" upperBound="60000.0" />
         </yAxis>
       </LineChart>
       <HBox spacing="5.0" GridPane.rowIndex="2">

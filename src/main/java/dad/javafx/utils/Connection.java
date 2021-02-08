@@ -21,6 +21,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 
 import dad.javafx.model.ApiBitcoin;
 import dad.javafx.model.Bpi;
+import dad.javafx.model.CouchBitcoin;
 
 public class Connection implements Runnable {
 
@@ -28,22 +29,15 @@ public class Connection implements Runnable {
 
 	private HttpClient httpClient;
 	private ObjectMapper objectMapper;
+	private CouchDbConnector connector;
 
 	public Connection() {
 
 		objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		
-	/*	CouchDbConnector connector;
-		
-		connector = this.connectToDatabase("BitcoinDB");
-
-		
-		
-		connector.create();*/
 
 	}
 
-	public Optional<ApiBitcoin> getAPIBitcoinCurrent() {
+	private Optional<ApiBitcoin> getAPIBitcoinCurrent() {
 
 		String response = "";
 
@@ -73,7 +67,7 @@ public class Connection implements Runnable {
 
 	}
 
-	public Optional<Bpi> getAPIBitcoinHistorical() {
+	private Optional<Bpi> getAPIBitcoinHistorical() {
 
 		String response = "";
 
@@ -103,7 +97,7 @@ public class Connection implements Runnable {
 
 	}
 
-	public void connecToCouchDB() {
+	private void connecToCouchDB() {
 
 		try {
 			httpClient = new StdHttpClient.Builder().url("http://127.0.0.1:5984").username("admin").password("admin")
@@ -117,7 +111,7 @@ public class Connection implements Runnable {
 
 	}
 
-	public CouchDbConnector connectToDatabase(String databaseName) {
+	private CouchDbConnector connectToDatabase(String databaseName) {
 
 		CouchDbInstance dbInstance = new StdCouchDbInstance(httpClient);
 
@@ -129,27 +123,34 @@ public class Connection implements Runnable {
 
 	}
 
-	public void subirValorBitcoinCouch(ApiBitcoin apiBitcoin) {  
-		
-		//TODO COMPLETAR
-		
+	public void subirValorBitcoinCouch(ApiBitcoin apiBitcoin) {
+
+		// TODO COMPLETAR
+
 		apiBitcoin.getBpi().getEUR();
-		
+
 	}
 
 	@Override
 	public void run() {
 
-		Optional<ApiBitcoin> optionalApiBitcoin;
+		Optional<ApiBitcoin> maybeBitcoin;
+
+		this.connecToCouchDB();
+
+		connector = this.connectToDatabase("bitcoin");
 
 		while (true) {
 
 			try {
-				optionalApiBitcoin = this.getAPIBitcoinCurrent();
+				maybeBitcoin = this.getAPIBitcoinCurrent();
+				if (maybeBitcoin.isPresent()) {
 
-				if (optionalApiBitcoin.isPresent())
+					CouchBitcoin cBitcoin = new CouchBitcoin(maybeBitcoin.get());
 
-					this.subirValorBitcoinCouch(optionalApiBitcoin.get());
+					System.out.println(cBitcoin);
+					connector.create(cBitcoin);
+				}
 
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
