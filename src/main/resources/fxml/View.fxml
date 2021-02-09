@@ -46,7 +46,7 @@
       <HBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
          <children>
             <Label text="Precio actual Bitcoin" />
-            <TextField fx:id="textField_valorBitcoin" editable="false" prefHeight="26.0" prefWidth="55.0" />
+            <TextField fx:id="textField_valorBitcoin" editable="false" prefHeight="26.0" prefWidth="165.0" />
          </children>
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

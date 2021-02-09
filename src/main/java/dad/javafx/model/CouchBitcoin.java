@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties({ "id", "revision", "support" })
+@JsonIgnoreProperties({ "id", "revision" })
 public class CouchBitcoin {
 	
 	@JsonIgnoreProperties(ignoreUnknown = true)
@@ -29,7 +29,7 @@ public class CouchBitcoin {
 	@JsonProperty("_id")
 	private final String cid = "current_value";
 	
-	//@JsonIgnore
+	@JsonIgnore
 	private PropertyChangeSupport support;
 
 	public String getCid()
@@ -59,6 +59,7 @@ public class CouchBitcoin {
 	}
 
 	public double getEuros() {
+		System.out.println("Valor en euros: " + euros);
 		return euros;
 	}
 
@@ -72,10 +73,12 @@ public class CouchBitcoin {
 
 	public void setUsd(double usd) {
 		this.usd = usd;
+		support.firePropertyChange("usd", this.usd, usd);
 	}
 
 	public void setEuros(double euros) {
 		this.euros = euros;
+		System.out.println("Actualizando euros: " + euros);
 		support.firePropertyChange("euros", this.euros, euros);
 	}
 
@@ -90,9 +93,12 @@ public class CouchBitcoin {
 	
 	
 	public CouchBitcoin()
-	{}
+	{
+		support = new PropertyChangeSupport(this);
+	}
 	
 	public CouchBitcoin(ApiBitcoin apibitcoin) {
+		support = new PropertyChangeSupport(this);
 			loadFromApiBitcoin(apibitcoin);	
 	}
 	
@@ -101,7 +107,7 @@ public class CouchBitcoin {
 		time = apibitcoin.getTime();
 		usd = apibitcoin.getBpi().getUSD().getRateFloat();
 		euros = apibitcoin.getBpi().getEUR().getRateFloat();
-		support = new PropertyChangeSupport(this);
+		
 	}
 	
 	public void addPropertyChangeListener(PropertyChangeListener listener) {

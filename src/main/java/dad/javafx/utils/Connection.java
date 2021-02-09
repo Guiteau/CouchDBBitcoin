@@ -3,6 +3,7 @@ package dad.javafx.utils;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
 
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
@@ -37,9 +38,11 @@ public class Connection{
 	public Connection() {
 
 		objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		
 		this.connecToCouchDB();
 
 		connector = this.connectToDatabase("bitcoin");
+		
 		br = new BitcoinRepository(connector);
 	}
 
@@ -135,18 +138,16 @@ public class Connection{
 		cb.loadFromApiBitcoin(apiBitcoin);
 		
 		br.update(cb);
-		
-		System.out.println(cb);
 
 	}
 
 	public CouchBitcoin bajandoDatosdeCouchDB()
 	{
 		
-		return current_value;
+		return br.get("current_value");
 	}
 	
-	public void updatingCouchBitcoin()
+	public void updatingCouchBitcoin(CouchBitcoin current_value)
 	{
 		while(true)
 		{
@@ -154,17 +155,19 @@ public class Connection{
 		}
 	}
 	
+	public void updateCouchBitcoin(CouchBitcoin current_value)
+	{
+		current_value = null;
+		current_value = br.get("current_value");
+	}
+	
 
-	public void run() {
+	public void run(CountDownLatch countdownlatch) {
 
 		Optional<ApiBitcoin> maybeBitcoin;
 		
-
-		
-
-		
-		
-		br.add(new CouchBitcoin());
+		if (!br.contains("current_value"))
+			br.add(new CouchBitcoin());
 		
 		while (true) {
 
@@ -172,13 +175,17 @@ public class Connection{
 				maybeBitcoin = this.getAPIBitcoinCurrent();
 				
 				if (maybeBitcoin.isPresent())
-					subirValorBitcoinCouch(maybeBitcoin.get());
-
+					subirValorBitcoinCouch(maybeBitcoin.get());		
+				
+				countdownlatch.countDown();
+				
+				
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 		}
 
 	}

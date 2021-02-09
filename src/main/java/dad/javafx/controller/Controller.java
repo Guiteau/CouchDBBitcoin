@@ -4,12 +4,14 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.ResourceBundle;
+import java.util.concurrent.CountDownLatch;
 
 import dad.javafx.model.BitcoinRepository;
 import dad.javafx.model.CouchBitcoin;
 import dad.javafx.utils.Connection;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.adapter.JavaBeanBooleanPropertyBuilder;
 import javafx.beans.property.adapter.JavaBeanDoubleProperty;
@@ -79,43 +81,80 @@ public class Controller implements Initializable {
 		
 		connection = new Connection();
 		
-		try {
-			JavaBeanDoubleProperty prop = JavaBeanDoublePropertyBuilder.create()
-					.bean(connection.bajandoDatosdeCouchDB())
-					.name("euros")
-					.build();
-			
-			
-			
-			prop.addListener((o, ov, nv)->{
-				if (nv!=null)
-					textField_valorBitcoin.setText(nv.toString());
-			});
-		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		couchbitcoin_property = new SimpleObjectProperty<>();
+
 	}
 	
     @FXML
     void on_start(ActionEvent event) {
+    	
+    	CountDownLatch countdownlatch = new CountDownLatch(1);
+    	
     	taskUploadValue = new Task<Void>() {
 
 			@Override
 			protected Void call() throws Exception {
-				connection.run();
-				
+				connection.run(countdownlatch);
 				return null;
 			}
     		
 		};
 		
+		
+		
+		
 		taskGetValue = new Task<Void>()
 		{
 			@Override
 			protected Void call() throws Exception {
-				couchbitcoin_property.set(connection.bajandoDatosdeCouchDB());
-				connection.updatingCouchBitcoin();
+				try {
+					countdownlatch.await(); // esto no se ejecuta hasta que el hilo haya recogido un dato
+					
+					CouchBitcoin cb = connection.bajandoDatosdeCouchDB();
+										
+					JavaBeanDoubleProperty prop = JavaBeanDoublePropertyBuilder.create()
+							.bean(cb)
+							.name("euros")
+							.build();
+					
+					
+					
+					//prop.bind(textField_valorBitcoin.textProperty());
+					//textField_valorBitcoin.textProperty().bind(prop);
+					//Bindings.bindBidirectional(textField_valorBitcoin.textProperty(), prop, new NumberStringConverter());
+					couchbitcoin_property.set(cb);
+					//connection.updatingCouchBitcoin(cb);
+					
+					while(true)
+					{
+						cb = connection.bajandoDatosdeCouchDB();
+						System.out.println(cb.getEuros());
+						System.out.println("hola");
+						textField_valorBitcoin.setText(String.valueOf(cb.getEuros()));
+					}
+					
+					/*
+					prop.addListener((o, ov, nv)->{
+						if (nv!=null)
+						{
+							System.out.println(nv + nv.toString());
+							textField_valorBitcoin.setText(nv.toString());
+						}
+							
+						
+					});
+					*/
+					
+					//connection.updatingCouchBitcoin();
+				} catch (NoSuchMethodException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+				
+				
 				return null;
 			}
 		};
