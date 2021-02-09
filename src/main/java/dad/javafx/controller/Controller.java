@@ -8,8 +8,14 @@ import java.util.ResourceBundle;
 import dad.javafx.model.BitcoinRepository;
 import dad.javafx.model.CouchBitcoin;
 import dad.javafx.utils.Connection;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.adapter.JavaBeanBooleanPropertyBuilder;
+import javafx.beans.property.adapter.JavaBeanDoubleProperty;
+import javafx.beans.property.adapter.JavaBeanDoublePropertyBuilder;
+import javafx.beans.property.adapter.JavaBeanStringProperty;
+import javafx.beans.property.adapter.JavaBeanStringPropertyBuilder;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,6 +29,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.util.converter.DoubleStringConverter;
+import javafx.util.converter.NumberStringConverter;
 
 public class Controller implements Initializable {
 
@@ -71,8 +78,23 @@ public class Controller implements Initializable {
 		series = new XYChart.Series<>();
 		
 		connection = new Connection();
-		textField_inversion.textProperty().bind(new SimpleStringProperty(String.valueOf(couchbitcoin_property.get().getEuros())));
 		
+		try {
+			JavaBeanDoubleProperty prop = JavaBeanDoublePropertyBuilder.create()
+					.bean(connection.bajandoDatosdeCouchDB())
+					.name("euros")
+					.build();
+			
+			
+			
+			prop.addListener((o, ov, nv)->{
+				if (nv!=null)
+					textField_valorBitcoin.setText(nv.toString());
+			});
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
     @FXML

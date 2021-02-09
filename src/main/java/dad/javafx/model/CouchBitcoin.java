@@ -1,12 +1,17 @@
 package dad.javafx.model;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties({ "id", "revision" })
+@JsonIgnoreProperties({ "id", "revision", "support" })
 public class CouchBitcoin {
 	
 	@JsonIgnoreProperties(ignoreUnknown = true)
@@ -23,6 +28,9 @@ public class CouchBitcoin {
 	
 	@JsonProperty("_id")
 	private final String cid = "current_value";
+	
+	//@JsonIgnore
+	private PropertyChangeSupport support;
 
 	public String getCid()
 	{
@@ -68,6 +76,7 @@ public class CouchBitcoin {
 
 	public void setEuros(double euros) {
 		this.euros = euros;
+		support.firePropertyChange("euros", this.euros, euros);
 	}
 
 	@Override
@@ -92,6 +101,15 @@ public class CouchBitcoin {
 		time = apibitcoin.getTime();
 		usd = apibitcoin.getBpi().getUSD().getRateFloat();
 		euros = apibitcoin.getBpi().getEUR().getRateFloat();
+		support = new PropertyChangeSupport(this);
 	}
+	
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+        support.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        support.removePropertyChangeListener(listener);
+    }
 
 }
