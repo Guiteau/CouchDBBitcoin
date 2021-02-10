@@ -73,7 +73,6 @@ public class CouchBitcoin {
 	}
 
 	public double getEuros() {
-		System.out.println("Valor en euros: " + euros);
 		return euros;
 	}
 
@@ -91,16 +90,18 @@ public class CouchBitcoin {
 	}
 
 	public void setEuros(double euros) {
+		double oldeuros = this.euros;
 		this.euros = euros;
-		System.out.println("Actualizando euros: " + euros);
-		support.firePropertyChange("euros", this.euros, euros);
+		support.firePropertyChange("euros", oldeuros, euros);
 	}
 
+	/*
 	@Override
 	public String toString() {
 		return "CouchBitcoin [id=" + cid + ", revision=" + revision + ", time=" + time + ", usd=" + usd + ", euros="
 				+ euros + "]";
 	}
+	*/
 
 	public void loadFromApiBitcoin(ApiBitcoin apibitcoin)
 	{

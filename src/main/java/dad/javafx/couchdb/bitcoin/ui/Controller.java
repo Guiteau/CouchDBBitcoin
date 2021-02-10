@@ -87,12 +87,9 @@ public class Controller implements Initializable {
 				return null;
 			}
 		};
-		taskUploadValue.exceptionProperty().addListener((observable, oldValue, newValue) -> {
-			if (newValue != null)
-				newValue.printStackTrace();
-		});
-
-		taskGetValue = new Task<Void>() {
+		
+		taskGetValue = new Task<Void>()
+		{
 			@Override
 			protected Void call() throws Exception {
 				try {
@@ -101,40 +98,33 @@ public class Controller implements Initializable {
 					CouchBitcoin cb = connection.getCurrent();
 
 					JavaBeanDoubleProperty prop = JavaBeanDoublePropertyBuilder.create().bean(cb).name("euros").build();
+		
+					ObjectProperty<CouchBitcoin> cb_prop = new SimpleObjectProperty<>(cb);
 					
-					// prop.bind(textField_valorBitcoin.textProperty());
-					// textField_valorBitcoin.textProperty().bind(prop);
-					// Bindings.bindBidirectional(textField_valorBitcoin.textProperty(), prop, new
-					// NumberStringConverter());
-					couchbitcoin_property.set(cb);
-					// connection.updatingCouchBitcoin(cb);
-
-					while (true) {
-						cb = connection.getCurrent();
-						System.out.println(cb.getEuros());
-						System.out.println("hola");
-						textField_valorBitcoin.setText(String.valueOf(cb.getEuros()));
+					cb_prop.addListener((o, ov, nv)-> {
+					textField_valorBitcoin.setText(String.valueOf(nv.getEuros()));
+					});
+					
+					while(true)
+					{
+						cb_prop.set(connection.getCurrent());
+						Thread.sleep(1000);
 					}
-
-					/*
-					 * prop.addListener((o, ov, nv)->{ if (nv!=null) { System.out.println(nv +
-					 * nv.toString()); textField_valorBitcoin.setText(nv.toString()); }
-					 * 
-					 * 
-					 * });
-					 */
-
-					// connection.updatingCouchBitcoin();
-				} catch (NoSuchMethodException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (Exception e) {
+					
+				} catch (Exception e)
+				{
 					e.printStackTrace();
 				}
 
 				return null;
 			}
 		};
+		
+		taskUploadValue.exceptionProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue != null)
+				newValue.printStackTrace();
+		});
+
 		taskGetValue.exceptionProperty().addListener((observable, oldValue, newValue) -> {
 			if (newValue != null)
 				newValue.printStackTrace();
