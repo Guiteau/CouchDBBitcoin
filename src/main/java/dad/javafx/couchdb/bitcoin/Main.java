@@ -1,6 +1,6 @@
-package dad.javafx.couchDBBitcoin;
+package dad.javafx.couchdb.bitcoin;
 
-import dad.javafx.utils.Connection;
+import dad.javafx.couchdb.bitcoin.ui.App;
 
 public class Main {
 

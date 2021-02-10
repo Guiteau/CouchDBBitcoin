@@ -1,5 +1,5 @@
 
-package dad.javafx.model;
+package dad.javafx.couchdb.bitcoin.api.model;
 
 import java.util.HashMap;
 import java.util.Map;
