@@ -31,7 +31,7 @@
           <CategoryAxis fx:id="axisX_lineChart" side="BOTTOM" />
         </xAxis>
         <yAxis>
-          <NumberAxis fx:id="axisY_lineChart" label="Bitcoin value" side="LEFT" upperBound="60000.0" />
+          <NumberAxis fx:id="axisY_lineChart" label="Bitcoin value" lowerBound="30000.0" side="LEFT" upperBound="60000.0" />
         </yAxis>
       </LineChart>
       <HBox spacing="5.0" GridPane.rowIndex="2">

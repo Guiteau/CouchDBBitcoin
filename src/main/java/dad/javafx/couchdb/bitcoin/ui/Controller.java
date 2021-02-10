@@ -8,6 +8,7 @@ import java.util.concurrent.CountDownLatch;
 
 import dad.javafx.couchdb.bitcoin.api.model.CouchBitcoin;
 import dad.javafx.couchdb.bitcoin.db.CouchDB;
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.adapter.JavaBeanDoubleProperty;
@@ -30,15 +31,14 @@ public class Controller implements Initializable {
 	private CouchDB connection;
 
 	private Task<Void> taskUploadValue;
+	
 	private Task<Void> taskGetValue;
-
-	private ObjectProperty<CouchBitcoin> couchbitcoin_property;
-
+	
 	@FXML
 	private GridPane root;
 
 	@FXML
-	private LineChart<Number, Number> lineChart_bitcoins;
+	private LineChart<String, Number> lineChart_bitcoins;
 
 	@FXML
 	private CategoryAxis axisX_lineChart;
@@ -52,7 +52,7 @@ public class Controller implements Initializable {
 	@FXML
 	private Button button_comprar, button_vender, button_start;
 
-	private XYChart.Series<Double, Double> series;
+	private XYChart.Series<String, Number> series;
 
 	public Controller() throws IOException {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/View.fxml"));
@@ -70,8 +70,10 @@ public class Controller implements Initializable {
 		series = new XYChart.Series<>();
 
 		connection = new CouchDB();
-
-		couchbitcoin_property = new SimpleObjectProperty<>();
+		
+		axisY_lineChart.setAutoRanging(false);
+		
+		axisY_lineChart.setLowerBound(30000);
 
 	}
 
@@ -94,7 +96,7 @@ public class Controller implements Initializable {
 			protected Void call() throws Exception {
 				try {
 					countdownlatch.await(); // esto no se ejecuta hasta que el hilo haya recogido un dato
-
+										
 					CouchBitcoin cb = connection.getCurrent();
 
 					JavaBeanDoubleProperty prop = JavaBeanDoublePropertyBuilder.create().bean(cb).name("euros").build();
@@ -103,6 +105,10 @@ public class Controller implements Initializable {
 					
 					cb_prop.addListener((o, ov, nv)-> {
 					textField_valorBitcoin.setText(String.valueOf(nv.getEuros()));
+					
+					fillData(nv.getEuros(), nv.getTime().getUpdatedISO().substring(nv.getTime().getUpdatedISO().indexOf('T'), nv.getTime().getUpdatedISO().indexOf('+')));
+					Platform.runLater(() -> lineChart_bitcoins.getData().add(series));
+
 					});
 					
 					while(true)
@@ -134,9 +140,9 @@ public class Controller implements Initializable {
 		new Thread(taskGetValue).start();
 	}
 
-	public void fillData(Double value, Double time) {
+	public void fillData(Number value, String time) {
 
-		series.getData().add(new XYChart.Data<Double, Double>(time, value));
+		series.getData().add(new XYChart.Data<String, Number>(time, value));		
 
 	}
 
