@@ -1,5 +1,5 @@
 
-package dad.javafx.model;
+package dad.javafx.couchdb.bitcoin.api.model;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +19,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
     "description",
     "rate_float"
 })
-public class EUR {
+public class GBP {
 
     @JsonProperty("code")
     private String code;
@@ -38,7 +38,7 @@ public class EUR {
      * No args constructor for use in serialization
      * 
      */
-    public EUR() {
+    public GBP() {
     }
 
     /**
@@ -49,7 +49,7 @@ public class EUR {
      * @param rateFloat
      * @param description
      */
-    public EUR(String code, String symbol, String rate, String description, double rateFloat) {
+    public GBP(String code, String symbol, String rate, String description, double rateFloat) {
         super();
         this.code = code;
         this.symbol = symbol;

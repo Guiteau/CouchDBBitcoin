@@ -1,4 +1,4 @@
-package dad.javafx.model;
+package dad.javafx.couchdb.bitcoin.api.model;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -32,6 +32,21 @@ public class CouchBitcoin {
 	@JsonIgnore
 	private PropertyChangeSupport support;
 
+	private double usd;
+	private double euros;
+	private Time time;
+
+	
+	public CouchBitcoin()
+	{
+		support = new PropertyChangeSupport(this);
+	}
+	
+	public CouchBitcoin(ApiBitcoin apibitcoin) {
+		support = new PropertyChangeSupport(this);
+			loadFromApiBitcoin(apibitcoin);	
+	}
+	
 	public String getCid()
 	{
 		return cid;
@@ -42,7 +57,6 @@ public class CouchBitcoin {
 	@JsonProperty("_rev")
 	private String revision;
 
-	private Time time;
 
 	
 	
@@ -88,20 +102,6 @@ public class CouchBitcoin {
 				+ euros + "]";
 	}
 
-	private double usd;
-	private double euros;
-	
-	
-	public CouchBitcoin()
-	{
-		support = new PropertyChangeSupport(this);
-	}
-	
-	public CouchBitcoin(ApiBitcoin apibitcoin) {
-		support = new PropertyChangeSupport(this);
-			loadFromApiBitcoin(apibitcoin);	
-	}
-	
 	public void loadFromApiBitcoin(ApiBitcoin apibitcoin)
 	{
 		time = apibitcoin.getTime();

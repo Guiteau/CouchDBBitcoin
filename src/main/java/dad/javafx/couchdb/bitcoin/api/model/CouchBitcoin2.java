@@ -1,7 +1,6 @@
-package dad.javafx.model;
+package dad.javafx.couchdb.bitcoin.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javafx.beans.property.DoubleProperty;
