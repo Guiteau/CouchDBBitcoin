@@ -2,7 +2,9 @@ package dad.javafx.couchdb.bitcoin.ui;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
 
@@ -18,6 +20,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -67,13 +70,11 @@ public class Controller implements Initializable {
 
 		lineChart_bitcoins.setTitle("Mercado Bitcoins " + Calendar.getInstance().get(Calendar.YEAR));
 
+		lineChart_bitcoins.setCursor(Cursor.CROSSHAIR);
+		
 		series = new XYChart.Series<>();
 
 		connection = new CouchDB();
-		
-		axisY_lineChart.setAutoRanging(false);
-		
-		axisY_lineChart.setLowerBound(30000);
 
 	}
 
@@ -96,18 +97,23 @@ public class Controller implements Initializable {
 			protected Void call() throws Exception {
 				try {
 					countdownlatch.await(); // esto no se ejecuta hasta que el hilo haya recogido un dato
+					
+					Platform.runLater(() -> lineChart_bitcoins.getData().add(series));
 										
 					CouchBitcoin cb = connection.getCurrent();
 
 					JavaBeanDoubleProperty prop = JavaBeanDoublePropertyBuilder.create().bean(cb).name("euros").build();
 		
 					ObjectProperty<CouchBitcoin> cb_prop = new SimpleObjectProperty<>(cb);
-					
+										
 					cb_prop.addListener((o, ov, nv)-> {
 					textField_valorBitcoin.setText(String.valueOf(nv.getEuros()));
 					
-					fillData(nv.getEuros(), nv.getTime().getUpdatedISO().substring(nv.getTime().getUpdatedISO().indexOf('T'), nv.getTime().getUpdatedISO().indexOf('+')));
-					Platform.runLater(() -> lineChart_bitcoins.getData().add(series));
+					long yourmilliseconds = System.currentTimeMillis();
+					SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");    
+					Date resultdate = new Date(yourmilliseconds);
+					
+					fillData(nv.getEuros(), sdf.format(resultdate));
 
 					});
 					

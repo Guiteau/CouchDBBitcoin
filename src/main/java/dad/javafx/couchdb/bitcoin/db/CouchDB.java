@@ -51,7 +51,7 @@ public class CouchDB {
 	}
 
 	private void storeBitcoin(ApiBitcoin apiBitcoin) {
-		CouchBitcoin cb = br.get("current_value");
+		CouchBitcoin cb = br.get("current_value");  
 		cb.loadFromApiBitcoin(apiBitcoin);
 		br.update(cb);
 	}
