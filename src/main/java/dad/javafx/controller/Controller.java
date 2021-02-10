@@ -100,9 +100,6 @@ public class Controller implements Initializable {
     		
 		};
 		
-		
-		
-		
 		taskGetValue = new Task<Void>()
 		{
 			@Override
@@ -111,44 +108,19 @@ public class Controller implements Initializable {
 					countdownlatch.await(); // esto no se ejecuta hasta que el hilo haya recogido un dato
 					
 					CouchBitcoin cb = connection.bajandoDatosdeCouchDB();
-										
-					JavaBeanDoubleProperty prop = JavaBeanDoublePropertyBuilder.create()
-							.bean(cb)
-							.name("euros")
-							.build();
 					
+					ObjectProperty<CouchBitcoin> cb_prop = new SimpleObjectProperty<>(cb);
 					
-					
-					//prop.bind(textField_valorBitcoin.textProperty());
-					//textField_valorBitcoin.textProperty().bind(prop);
-					//Bindings.bindBidirectional(textField_valorBitcoin.textProperty(), prop, new NumberStringConverter());
-					couchbitcoin_property.set(cb);
-					//connection.updatingCouchBitcoin(cb);
+					cb_prop.addListener((o, ov, nv)-> {
+					textField_valorBitcoin.setText(String.valueOf(nv.getEuros()));
+					});
 					
 					while(true)
 					{
-						cb = connection.bajandoDatosdeCouchDB();
-						System.out.println(cb.getEuros());
-						System.out.println("hola");
-						textField_valorBitcoin.setText(String.valueOf(cb.getEuros()));
+						cb_prop.set(connection.bajandoDatosdeCouchDB());
+						Thread.sleep(1000);
 					}
 					
-					/*
-					prop.addListener((o, ov, nv)->{
-						if (nv!=null)
-						{
-							System.out.println(nv + nv.toString());
-							textField_valorBitcoin.setText(nv.toString());
-						}
-							
-						
-					});
-					*/
-					
-					//connection.updatingCouchBitcoin();
-				} catch (NoSuchMethodException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				} catch (Exception e)
 				{
 					e.printStackTrace();

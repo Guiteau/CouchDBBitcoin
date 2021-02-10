@@ -170,7 +170,7 @@ public class Connection{
 			br.add(new CouchBitcoin());
 		
 		while (true) {
-
+			System.out.println("HIlo 1");
 			try {
 				maybeBitcoin = this.getAPIBitcoinCurrent();
 				
