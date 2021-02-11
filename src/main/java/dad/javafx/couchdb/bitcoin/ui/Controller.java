@@ -11,7 +11,10 @@ import java.util.concurrent.CountDownLatch;
 import dad.javafx.couchdb.bitcoin.api.model.CouchBitcoin;
 import dad.javafx.couchdb.bitcoin.db.CouchDB;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.adapter.JavaBeanDoubleProperty;
 import javafx.beans.property.adapter.JavaBeanDoublePropertyBuilder;
@@ -26,17 +29,27 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.util.converter.DoubleStringConverter;
+import javafx.util.converter.NumberStringConverter;
 
 public class Controller implements Initializable {
 
 	private CouchDB connection;
 
 	private Task<Void> taskUploadValue;
-	
+
 	private Task<Void> taskGetValue;
+
+	private DoubleProperty walletValue;
 	
+	private CouchBitcoin cb;
+
+	@FXML
+	private Label bitcoinWallet;
+
 	@FXML
 	private GridPane root;
 
@@ -71,11 +84,17 @@ public class Controller implements Initializable {
 		lineChart_bitcoins.setTitle("Mercado Bitcoins " + Calendar.getInstance().get(Calendar.YEAR));
 
 		lineChart_bitcoins.setCursor(Cursor.CROSSHAIR);
-		
+
 		series = new XYChart.Series<>();
 
 		connection = new CouchDB();
 
+		walletValue = new SimpleDoubleProperty(100);
+
+		
+		
+		//textField_valorCartera.textProperty().bind(walletValue.asString());
+		textField_valorCartera.textProperty().bindBidirectional(walletValue, new NumberStringConverter());
 	}
 
 	@FXML
@@ -90,48 +109,43 @@ public class Controller implements Initializable {
 				return null;
 			}
 		};
-		
-		taskGetValue = new Task<Void>()
-		{
+
+		taskGetValue = new Task<Void>() {
 			@Override
 			protected Void call() throws Exception {
 				try {
 					countdownlatch.await(); // esto no se ejecuta hasta que el hilo haya recogido un dato
-					
-					Platform.runLater(() -> lineChart_bitcoins.getData().add(series));
-										
-					CouchBitcoin cb = connection.getCurrent();
 
-					JavaBeanDoubleProperty prop = JavaBeanDoublePropertyBuilder.create().bean(cb).name("euros").build();
-		
+					Platform.runLater(() -> lineChart_bitcoins.getData().add(series));
+
+					cb = connection.getCurrent();
+
 					ObjectProperty<CouchBitcoin> cb_prop = new SimpleObjectProperty<>(cb);
-										
-					cb_prop.addListener((o, ov, nv)-> {
-					textField_valorBitcoin.setText(String.valueOf(nv.getEuros()));
-					
-					long yourmilliseconds = System.currentTimeMillis();
-					SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");    
-					Date resultdate = new Date(yourmilliseconds);
-					
-					fillData(nv.getEuros(), sdf.format(resultdate));
+
+					cb_prop.addListener((o, ov, nv) -> {
+						textField_valorBitcoin.setText(String.valueOf(nv.getEuros()));
+
+						long yourmilliseconds = System.currentTimeMillis();
+						SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm");
+						Date resultdate = new Date(yourmilliseconds);
+
+						Platform.runLater(() -> fillData(nv.getEuros(), sdf.format(resultdate)));
 
 					});
-					
-					while(true)
-					{
+
+					while (true) {
 						cb_prop.set(connection.getCurrent());
 						Thread.sleep(1000);
 					}
-					
-				} catch (Exception e)
-				{
+
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 
 				return null;
 			}
 		};
-		
+
 		taskUploadValue.exceptionProperty().addListener((observable, oldValue, newValue) -> {
 			if (newValue != null)
 				newValue.printStackTrace();
@@ -148,12 +162,27 @@ public class Controller implements Initializable {
 
 	public void fillData(Number value, String time) {
 
-		series.getData().add(new XYChart.Data<String, Number>(time, value));		
+		series.getData().add(new XYChart.Data<String, Number>(time, value));
 
 	}
 
 	public GridPane getRoot() {
 		return root;
+	}
+
+	@FXML
+	void on_buy(ActionEvent event) {
+		Double investEuros = Double.parseDouble(textField_inversion.getText());
+		walletValue.subtract(investEuros);
+		bitcoinWallet.setText(String.valueOf(Double.parseDouble(textField_inversion.getText() )/ cb.getEuros()));
+	}
+
+	@FXML
+	void on_sell(ActionEvent event) {
+		Double sellBitcoins = Double.parseDouble(bitcoinWallet.getText());
+		
+		Double change = sellBitcoins * cb.getEuros();
+		walletValue.add(change);
 	}
 
 }

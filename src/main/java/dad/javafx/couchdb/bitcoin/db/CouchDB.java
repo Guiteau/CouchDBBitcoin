@@ -34,7 +34,7 @@ public class CouchDB {
 			return new StdHttpClient.Builder()
 								.url("http://127.0.0.1:5984")
 								.username("admin")
-								.password("admin")
+								.password("sofasito")
 								.build();
 		} catch (MalformedURLException e) {
 			System.out.println("Fallo al crear la conexión a CouchDB. Clase Connection falló.");

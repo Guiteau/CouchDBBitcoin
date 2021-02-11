@@ -22,6 +22,7 @@
     <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
       <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
       <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
     <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
       <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
   </rowConstraints>
@@ -52,7 +53,7 @@
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </GridPane.margin>
       </HBox>
-      <HBox spacing="5.0" GridPane.rowIndex="3">
+      <HBox spacing="5.0" GridPane.rowIndex="4">
          <children>
             <Label text="Inversión" />
             <TextField fx:id="textField_inversion" />
@@ -61,19 +62,28 @@
             <Insets bottom="5.0" left="10.0" right="5.0" top="5.0" />
          </GridPane.margin>
       </HBox>
-      <HBox spacing="30.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+      <HBox spacing="30.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
          <children>
-            <Button fx:id="button_comprar" mnemonicParsing="false" text="Comprar" />
-            <Button fx:id="button_vender" mnemonicParsing="false" text="Vender" />
+            <Button fx:id="button_comprar" mnemonicParsing="false" onAction="#on_buy" text="Comprar" />
+            <Button fx:id="button_vender" mnemonicParsing="false" onAction="#on_sell" text="Vender" />
          </children>
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </GridPane.margin>
       </HBox>
-      <Button fx:id="button_start" mnemonicParsing="false" onAction="#on_start" prefHeight="26.0" prefWidth="107.0" text="Start" GridPane.rowIndex="4">
+      <Button fx:id="button_start" mnemonicParsing="false" onAction="#on_start" prefHeight="26.0" prefWidth="107.0" text="Start" GridPane.rowIndex="5">
          <GridPane.margin>
             <Insets bottom="10.0" left="10.0" right="5.0" top="5.0" />
          </GridPane.margin>
       </Button>
+      <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.rowIndex="3">
+         <children>
+            <Label text="Bitcoins cartera" />
+            <Label fx:id="bitcoinWallet" text="0" />
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+      </HBox>
    </children>
 </GridPane>
