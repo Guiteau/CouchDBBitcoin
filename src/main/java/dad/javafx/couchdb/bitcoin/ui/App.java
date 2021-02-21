@@ -7,12 +7,12 @@ import javafx.stage.Stage;
 
 public class App extends Application{
 	
-	Controller controller;
+	ControllerAplicacion controller;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
-		controller = new Controller();
+		controller = new ControllerAplicacion();
 		
 		Scene escena = new Scene(controller.getRoot(), 700, 400);
 		

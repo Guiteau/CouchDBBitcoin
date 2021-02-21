@@ -1,6 +1,7 @@
 package dad.javafx.couchdb.bitcoin.db;
 
 import java.net.MalformedURLException;
+import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 
 import org.ektorp.CouchDbConnector;
@@ -14,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import dad.javafx.couchdb.bitcoin.api.CoinDeskApi;
 import dad.javafx.couchdb.bitcoin.api.model.ApiBitcoin;
+import dad.javafx.couchdb.bitcoin.api.model.CarteraCouchDB;
 import dad.javafx.couchdb.bitcoin.api.model.CouchBitcoin;
 
 public class CouchDB {
@@ -22,11 +24,17 @@ public class CouchDB {
 
 	private CouchDbConnector connector;
 	private BitcoinRepository br;
+	private CarteraRepository cr;
+	private String usuario;
+	private String password;
 
 	public CouchDB() {
 		HttpClient dbClient = this.connectToCouchDB();
 		connector = this.connectToDatabase(dbClient, "bitcoin");
 		br = new BitcoinRepository(connector);
+		cr = new CarteraRepository(connector);
+		this.usuario = "";
+		this.password = "";
 	}
 
 	private HttpClient connectToCouchDB() {
@@ -34,7 +42,7 @@ public class CouchDB {
 			return new StdHttpClient.Builder()
 								.url("http://127.0.0.1:5984")
 								.username("admin")
-								.password("sofasito")
+								.password("admin")
 								.build();
 		} catch (MalformedURLException e) {
 			System.out.println("Fallo al crear la conexión a CouchDB. Clase Connection falló.");
@@ -48,6 +56,77 @@ public class CouchDB {
 		CouchDbConnector connector = new StdCouchDbConnector(databaseName, dbInstance);
 		connector.createDatabaseIfNotExists();
 		return connector;
+	}
+	
+	
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public void setCurrentCartera(CarteraCouchDB cartera) {
+		
+		cr.add(cartera);
+		
+	}
+	
+	public CarteraCouchDB getCurrentCartera() {
+		
+		return cr.get(usuario);
+		
+	}
+	
+	public Optional<CarteraCouchDB> getOptionalCartera(String usuario, String password) {
+		
+		CarteraCouchDB cartera = cr.get(usuario);
+		
+		this.usuario = usuario;
+		this.password = password;
+		
+		Optional<CarteraCouchDB> optionalCartera = Optional.ofNullable(cartera);
+		
+		if(cartera.getPassword().compareTo(password) == 0) {
+			
+			return optionalCartera;
+		}
+		
+		return Optional.empty();
+	}
+	
+	
+	public void storeCantidadBitcoinsCartera(double cantidadBitcoins) {
+		
+		CarteraCouchDB cartera = getCurrentCartera();
+		
+		cartera.setCantidadBitcoins(cantidadBitcoins);
+
+		cr.update(cartera);
+		
+	}
+	
+	public void storeDineroGanadoCartera(double dineroBitcoins) {
+		
+		CarteraCouchDB cartera = getCurrentCartera();
+		
+		cartera.setDineroGanado(dineroBitcoins);
+		
+		cr.update(cartera);
+		
+	}
+	
+	public double getCantidadDineroGanadoCartera() {
+		
+		return this.getCurrentCartera().getDineroGanado();
+		
+	}
+	
+	public double getCantidadBitcoinsCartera() {
+		
+		return this.getCurrentCartera().getCantidadBitcoins();
+		
 	}
 
 	private void storeBitcoin(ApiBitcoin apiBitcoin) {
