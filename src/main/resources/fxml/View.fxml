@@ -80,7 +80,7 @@
       <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.rowIndex="3">
          <children>
             <Label text="Bitcoins cartera" />
-            <Label fx:id="bitcoinWallet" text="0" />
+            <Label fx:id="label_bitcoinWallet" text="0" />
             <ImageView fx:id="imageView_bitcoin" pickOnBounds="true" preserveRatio="true" />
          </children>
          <padding>

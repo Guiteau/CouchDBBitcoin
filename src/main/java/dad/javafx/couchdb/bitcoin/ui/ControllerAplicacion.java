@@ -43,17 +43,19 @@ public class ControllerAplicacion implements Initializable {
 	private Task<Void> taskGetValue;
 
 	private DoubleProperty walletValue;
+	
+	private DoubleProperty bitcoinsInWallet;
 
 	private CouchBitcoin cb;
 
 	@FXML
-    private TextField textField_name;
-	
+	private TextField textField_name;
+
 	@FXML
 	private ImageView imageView_bitcoin;
 
 	@FXML
-	private Label bitcoinWallet;
+	private Label label_bitcoinWallet;
 
 	@FXML
 	private GridPane root;
@@ -85,57 +87,36 @@ public class ControllerAplicacion implements Initializable {
 	}
 
 	public void prepare() {
-		bitcoinWallet.setText(String.valueOf(connection.getCurrentCartera().getCantidadBitcoins())); // el label recibe
-																										// la cantidad
-																										// de Bitcoins
-																										// en CouchDB
+		bitcoinsInWallet = new SimpleDoubleProperty(connection.getCurrentCartera().getCantidadBitcoins());
+		
+		label_bitcoinWallet.textProperty().bindBidirectional(bitcoinsInWallet, new NumberStringConverter()); 
 
-		walletValue = new SimpleDoubleProperty(connection.getCurrentCartera().getDineroGanado()); // el DoubleProperty
-																									// recibe de entrada
-																									// la cantidad
-																									// ganada que lleva
+		walletValue = new SimpleDoubleProperty(connection.getCurrentCartera().getDineroGanado()); 
 
 		textField_valorCartera.textProperty().bindBidirectional(walletValue, new NumberStringConverter());
 
-		textField_valorBitcoin.textProperty().addListener((o, ov, nv) -> { // cuando el valor del bitcoin cambie
-																			// modificamos el valor de walletValue
-																			// (DoubleProperty)
-
+		/*
+		textField_valorBitcoin.textProperty().addListener((o, ov, nv) -> {
 			if (!nv.isEmpty()) {
-
-				walletValue.set(Double.parseDouble(bitcoinWallet.getText()) * Double.parseDouble(nv.toString())); // cantidad
-																													// bitcoins
-																													// en
-																													// cartera
-																													// *
-																													// nuevoValor
-																													// del
-																													// bitcoin
+				walletValue.set(Double.parseDouble(label_bitcoinWallet.getText()) * Double.parseDouble(nv.toString()));
 				connection.storeDineroGanadoCartera(walletValue.get());
 			}
 
 		});
-
-		bitcoinWallet.textProperty().addListener((o, ov, nv) -> { // cuando cambie el valor de bitcoins en la cartera
-																	// multiplicamos el valor de walletValue por la
-																	// cantidad de bitcoins
-
+*/
+		
+		label_bitcoinWallet.textProperty().addListener((o, ov, nv) -> {
 			if (!nv.isEmpty()) {
 				walletValue.set(
-						Double.parseDouble(textField_valorBitcoin.getText()) * (Double.parseDouble(nv.toString()))); // valor
-																														// del
-																														// bitcoin
-																														// *
-																														// nuevoValor
-																														// bitcoinWallet(label)
+						Double.parseDouble(textField_valorBitcoin.getText()) * (Double.parseDouble(nv.toString())));
 				connection.storeDineroGanadoCartera(walletValue.get());
 				connection.storeCantidadBitcoinsCartera(Double.parseDouble(nv.toString()));
 			}
 
 		});
+		
 
-		textField_inversion.setEditable(false); // para que no se puedan comprar ni vender bitcoins sin conocer el valor
-												// de mercado
+		textField_inversion.setEditable(false);
 	}
 
 	@Override
@@ -234,12 +215,11 @@ public class ControllerAplicacion implements Initializable {
 	void on_buy(ActionEvent event) {
 
 		if (!textField_valorBitcoin.getText().isEmpty() && !textField_inversion.getText().isEmpty()) {
-
-			double sumaCompraBitcoins = Double.parseDouble(bitcoinWallet.getText())
-					+ Double.parseDouble(textField_inversion.getText()); // sumamos el valor del label más el valor de
-																			// la inversión
-
-			bitcoinWallet.setText(String.valueOf(Math.round(sumaCompraBitcoins * 100.0) / 100.0));
+			Double bitcoinsToBuy = Double.parseDouble(textField_inversion.getText());
+			Double moneyInBitcoin = bitcoinsToBuy * Double.parseDouble(textField_valorBitcoin.getText());
+			
+			walletValue.subtract(bitcoinsToBuy);
+			bitcoinsInWallet.add(moneyInBitcoin);
 		}
 
 		textField_inversion.setText(""); // vacíamos el textField de la inversión
@@ -256,24 +236,16 @@ public class ControllerAplicacion implements Initializable {
 	void on_sell(ActionEvent event) {
 
 		if (!textField_valorBitcoin.getText().isEmpty() && !textField_inversion.getText().isEmpty()) {
-
-			double restaCompraBitcoins = Double.parseDouble(bitcoinWallet.getText())
-					- Double.parseDouble(textField_inversion.getText()); // restamos el valor del label menos el valor
-																			// de la inversión
-
-			if (restaCompraBitcoins >= 0) {
-
-				bitcoinWallet.setText(String.valueOf(Math.round(restaCompraBitcoins * 100.0) / 100.0));
-			}
+			Double bitcoinsToSell = Double.parseDouble(textField_inversion.getText());
+			
+			Double btcInRealMoney = bitcoinsToSell * Double.parseDouble(textField_valorBitcoin.getText());
+			
+			
+			walletValue.add(btcInRealMoney);
+			bitcoinsInWallet.subtract(bitcoinsToSell);
 		}
-
+		
 		textField_inversion.setText("");
-
-		/*
-		 * Double sellBitcoins = Double.parseDouble(bitcoinWallet.getText());
-		 * 
-		 * Double change = sellBitcoins * cb.getEuros(); walletValue.add(change);
-		 */
 	}
 
 	public void setConnection(CouchDB couchDB) {
