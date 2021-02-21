@@ -94,43 +94,42 @@ public class ControllerInicio implements Initializable {
 		return inicioView;
 	}
 
-	private void acceso(CarteraCouchDB cartera) {
-
-		Optional<CarteraCouchDB> optionalCartera = couchDB.getOptionalCartera(cartera.getNombre(),
-				cartera.getPassword());
-
-		if (optionalCartera.isPresent()) {
-
-			try {
-
-				controllerAplicacion = new ControllerAplicacion();
-				controllerAplicacion.setConnection(couchDB);
-				controllerAplicacion.prepare();
-				Scene escena = new Scene(controllerAplicacion.getRoot());
-				primaryStage.setScene(escena);
-				primaryStage.show();
-				access = true;
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-		} else {
-			Alert alert = new Alert(AlertType.WARNING);
-			alert.setTitle("Cuidado");
-			alert.setHeaderText("Error en los datos");
-			alert.setContentText("Usuario o contraseña incorrectos");
-			alert.showAndWait();
-		}
-
-	}
-
 	@FXML
 	void submitAction(ActionEvent event) {
 
 		access = false;
 
 		CarteraCouchDB carteraFormulario = new CarteraCouchDB();
+
+		Consumer<CarteraCouchDB> acceso = cartera -> {
+			Optional<CarteraCouchDB> optionalCartera = couchDB.getOptionalCartera(cartera.getNombre(),
+					cartera.getPassword());
+
+			if (optionalCartera.isPresent()) {
+
+				try {
+
+					controllerAplicacion = new ControllerAplicacion();
+					controllerAplicacion.setConnection(couchDB);
+					controllerAplicacion.prepare();
+					/*
+					 * Scene escena = new Scene(controllerAplicacion.getRoot());
+					 * primaryStage.setScene(escena); primaryStage.show();
+					 */
+					access = true;
+
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+			} else {
+				Alert alert = new Alert(AlertType.WARNING);
+				alert.setTitle("Cuidado");
+				alert.setHeaderText("Error en los datos");
+				alert.setContentText("Usuario o contraseña incorrectos");
+				alert.showAndWait();
+			}
+		};
 
 		if (radio_crearCuenta.isSelected()) {
 
@@ -144,7 +143,7 @@ public class ControllerInicio implements Initializable {
 
 			couchDB.setNewCartera(carteraFormulario);
 
-			acceso(carteraFormulario);
+			acceso.accept(carteraFormulario);
 
 		}
 
@@ -154,44 +153,40 @@ public class ControllerInicio implements Initializable {
 
 			carteraFormulario.setPassword(passwordField.getText());
 
-			acceso(carteraFormulario);
-			
-		}	
-
-			if (radio_borrarCuenta.isSelected()) {
-
-				if (couchDB.deleteCartera(textField_usuario.getText(), passwordField.getText())) {
-
-					Alert alert = new Alert(AlertType.INFORMATION);
-					alert.setTitle("Información");
-					alert.setHeaderText(null);
-					alert.setContentText("¡Cartera borrada con éxito!");
-
-					alert.showAndWait();
-
-				} else {
-					Alert alert = new Alert(AlertType.WARNING);
-					alert.setTitle("Cuidado");
-					alert.setHeaderText("Error en los datos");
-					alert.setContentText("Usuario o contraseña incorrectos");
-					alert.showAndWait();
-				}
-
-			}
-
-			if ((radio_entrar.isSelected() || radio_crearCuenta.isSelected()) && access) {
-
-				Scene escena = new Scene(controllerAplicacion.getRoot());
-
-				primaryStage.getIcons().add(new Image("/icons/couchdb.png"));
-				primaryStage.setScene(escena);
-				primaryStage.setTitle("Proyecto CouchDB\t");
-				primaryStage.show();
-
-			}
+			acceso.accept(carteraFormulario);
 
 		}
 
+		if (radio_borrarCuenta.isSelected()) {
+
+			if (couchDB.deleteCartera(textField_usuario.getText(), passwordField.getText())) {
+
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("Información");
+				alert.setHeaderText(null);
+				alert.setContentText("¡Cartera borrada con éxito!");
+
+				alert.showAndWait();
+
+			} else {
+				Alert alert = new Alert(AlertType.WARNING);
+				alert.setTitle("Cuidado");
+				alert.setHeaderText("Error en los datos");
+				alert.setContentText("Usuario o contraseña incorrectos");
+				alert.showAndWait();
+			}
+		}
+
+		if ((radio_entrar.isSelected() || radio_crearCuenta.isSelected()) && access) {
+
+			Scene escena = new Scene(controllerAplicacion.getRoot());
+
+			primaryStage.getIcons().add(new Image("/icons/couchdb.png"));
+			primaryStage.setScene(escena);
+			primaryStage.setTitle("Proyecto CouchDB\t");
+			primaryStage.show();
+		}
+	}
 
 	public void setStage(Stage stage) {
 

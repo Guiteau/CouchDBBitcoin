@@ -47,6 +47,9 @@ public class ControllerAplicacion implements Initializable {
 	private CouchBitcoin cb;
 
 	@FXML
+    private TextField textField_name;
+	
+	@FXML
 	private ImageView imageView_bitcoin;
 
 	@FXML
