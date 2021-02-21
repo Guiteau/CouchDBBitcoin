@@ -182,6 +182,12 @@ public class ControllerInicio implements Initializable {
 			primaryStage.setScene(escena);
 			primaryStage.setTitle("Proyecto CouchDB\t");
 			primaryStage.show();
+			
+			primaryStage.setOnCloseRequest(e -> {
+				
+				controllerAplicacion.setCorriendo(Boolean.FALSE);
+				
+			});
 		}
 	}
 
@@ -190,5 +196,7 @@ public class ControllerInicio implements Initializable {
 		primaryStage = stage;
 
 	}
+	
+	
 
 }

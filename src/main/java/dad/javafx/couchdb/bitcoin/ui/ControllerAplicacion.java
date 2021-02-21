@@ -73,6 +73,8 @@ public class ControllerAplicacion implements Initializable {
 	private Button button_comprar, button_vender, button_start;
 
 	private XYChart.Series<String, Number> series;
+	
+	private Boolean corriendo;
 
 	public ControllerAplicacion() throws IOException {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/View.fxml"));
@@ -95,6 +97,7 @@ public class ControllerAplicacion implements Initializable {
 		textField_name.setText(connection.getUsuario());		
 
 		textField_inversion.setEditable(false);
+		
 	}
 
 	@Override
@@ -110,6 +113,7 @@ public class ControllerAplicacion implements Initializable {
 
 		series = new XYChart.Series<>();
 
+		corriendo = Boolean.TRUE;
 	}
 
 	@FXML
@@ -122,7 +126,7 @@ public class ControllerAplicacion implements Initializable {
 		taskUploadValue = new Task<Void>() {
 			@Override
 			protected Void call() throws Exception {
-				connection.run(countdownlatch);
+				connection.run(countdownlatch, corriendo);
 				return null;
 			}
 		};
@@ -151,9 +155,10 @@ public class ControllerAplicacion implements Initializable {
 
 					});
 
-					while (true) {
+					while (corriendo) {
 						cb_prop.set(connection.getCurrent());
 						Thread.sleep(1000);
+						
 					}
 
 				} catch (Exception e) {
@@ -236,6 +241,10 @@ public class ControllerAplicacion implements Initializable {
 
 	public void setConnection(CouchDB couchDB) {
 		this.connection = couchDB;
+	}
+
+	public void setCorriendo(Boolean corriendo) {
+		this.corriendo = corriendo;
 	}
 
 }

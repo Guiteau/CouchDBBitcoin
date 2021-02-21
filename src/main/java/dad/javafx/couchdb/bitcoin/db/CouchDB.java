@@ -51,6 +51,7 @@ public class CouchDB {
 		cr = new CarteraRepository(connector);
 		this.usuario = "";
 		this.password = "";
+
 	}
 
 	private HttpClient connectToCouchDB() {
@@ -164,13 +165,13 @@ public class CouchDB {
 		return br.get("current_value");
 	}
 
-	public void run(CountDownLatch countdownlatch) {
+	public void run(CountDownLatch countdownlatch, Boolean corriendo) {
 
 		if (!br.contains("current_value")) {
 			br.add(new CouchBitcoin());
 		}
-
-		while (true) {
+		
+		while (corriendo) {
 
 			ApiBitcoin bitcoin = CoinDeskApi.getAPIBitcoinCurrent();
 

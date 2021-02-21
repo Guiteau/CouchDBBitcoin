@@ -17,16 +17,14 @@ public class App extends Application{
 		controllerInicio = new ControllerInicio();
 		
 		controllerInicio.setStage(primaryStage);
-
-//		controller = new ControllerAplicacion();
 		
 		Scene escena = new Scene(controllerInicio.getInicioView());
 		
 		primaryStage.getIcons().add(new Image("/icons/couchdb.png"));
 		primaryStage.setScene(escena);
 		primaryStage.setTitle("Proyecto CouchDB\t");
-		primaryStage.show();
-	
+		primaryStage.show();		
+		
 	}
 	
 	public static void main(String[] args) {
