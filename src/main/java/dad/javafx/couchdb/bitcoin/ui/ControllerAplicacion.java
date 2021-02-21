@@ -42,14 +42,11 @@ public class ControllerAplicacion implements Initializable {
 
 	private Task<Void> taskGetValue;
 
-	private DoubleProperty walletValue;
+	private DoubleProperty eurosWallet;
 	
 	private DoubleProperty bitcoinsInWallet;
 
 	private CouchBitcoin cb;
-
-	@FXML
-	private TextField textField_name;
 
 	@FXML
 	private ImageView imageView_bitcoin;
@@ -70,7 +67,7 @@ public class ControllerAplicacion implements Initializable {
 	private NumberAxis axisY_lineChart;
 
 	@FXML
-	private TextField textField_valorCartera, textField_valorBitcoin, textField_inversion;
+	private TextField textField_valorCartera, textField_valorBitcoin, textField_inversion, textField_name;
 
 	@FXML
 	private Button button_comprar, button_vender, button_start;
@@ -91,9 +88,11 @@ public class ControllerAplicacion implements Initializable {
 		
 		label_bitcoinWallet.textProperty().bindBidirectional(bitcoinsInWallet, new NumberStringConverter()); 
 
-		walletValue = new SimpleDoubleProperty(connection.getCurrentCartera().getDineroGanado()); 
+		eurosWallet = new SimpleDoubleProperty(connection.getCurrentCartera().getDineroGanado()); 
 
-		textField_valorCartera.textProperty().bindBidirectional(walletValue, new NumberStringConverter());
+		textField_valorCartera.textProperty().bindBidirectional(eurosWallet, new NumberStringConverter());
+		
+		textField_name.setText(connection.getUsuario());
 
 		/*
 		textField_valorBitcoin.textProperty().addListener((o, ov, nv) -> {
@@ -104,16 +103,29 @@ public class ControllerAplicacion implements Initializable {
 
 		});
 */
-		
+			
+/*		
 		label_bitcoinWallet.textProperty().addListener((o, ov, nv) -> {
+			
+			if(Double.parseDouble(nv) != 0) {			
+
+				eurosWallet.set(Double.parseDouble(textField_valorBitcoin.getText()) * (Double.parseDouble(nv.toString())));
+				connection.storeDineroGanadoCartera(eurosWallet.get());
+				connection.storeCantidadBitcoinsCartera(Double.parseDouble(nv.toString()));
+						
+			}
+
+		});*/
+		
+/*		label_bitcoinWallet.textProperty().addListener((o, ov, nv) -> {
 			if (!nv.isEmpty()) {
-				walletValue.set(
+				eurosWallet.set(
 						Double.parseDouble(textField_valorBitcoin.getText()) * (Double.parseDouble(nv.toString())));
-				connection.storeDineroGanadoCartera(walletValue.get());
+				connection.storeDineroGanadoCartera(eurosWallet.get());
 				connection.storeCantidadBitcoinsCartera(Double.parseDouble(nv.toString()));
 			}
 
-		});
+		});*/
 		
 
 		textField_inversion.setEditable(false);
@@ -215,34 +227,42 @@ public class ControllerAplicacion implements Initializable {
 	void on_buy(ActionEvent event) {
 
 		if (!textField_valorBitcoin.getText().isEmpty() && !textField_inversion.getText().isEmpty()) {
-			Double bitcoinsToBuy = Double.parseDouble(textField_inversion.getText());
-			Double moneyInBitcoin = bitcoinsToBuy * Double.parseDouble(textField_valorBitcoin.getText());
 			
-			walletValue.subtract(bitcoinsToBuy);
-			bitcoinsInWallet.add(moneyInBitcoin);
+			Double eurosToBuy = Double.parseDouble(textField_inversion.getText());
+			Double bitcoinsBought = eurosToBuy / Double.parseDouble(textField_valorBitcoin.getText());
+			
+			Double result = eurosWallet.get() - eurosToBuy;
+			
+			bitcoinsInWallet.set(bitcoinsInWallet.get() + bitcoinsBought);
+			
+			eurosWallet.set(result);
+			
+			connection.storeDineroGanadoCartera(eurosWallet.get());
+			connection.storeCantidadBitcoinsCartera(bitcoinsInWallet.get());
+			
 		}
 
-		textField_inversion.setText(""); // vacíamos el textField de la inversión
+		textField_inversion.setText(""); 
 
-		/*
-		 * Double investEuros = Double.parseDouble(textField_inversion.getText());
-		 * walletValue.subtract(investEuros);
-		 * bitcoinWallet.setText(String.valueOf(Double.parseDouble(textField_inversion.
-		 * getText() )/ cb.getEuros()));
-		 */
 	}
 
 	@FXML
 	void on_sell(ActionEvent event) {
 
 		if (!textField_valorBitcoin.getText().isEmpty() && !textField_inversion.getText().isEmpty()) {
-			Double bitcoinsToSell = Double.parseDouble(textField_inversion.getText());
 			
-			Double btcInRealMoney = bitcoinsToSell * Double.parseDouble(textField_valorBitcoin.getText());
+			Double bitcoinsToSell = Double.parseDouble(textField_inversion.getText());			
+			Double btcInEuros = bitcoinsToSell * Double.parseDouble(textField_valorBitcoin.getText());
+				
+			Double result = eurosWallet.get() + btcInEuros;
 			
+			bitcoinsInWallet.set(bitcoinsInWallet.get()-bitcoinsToSell);
 			
-			walletValue.add(btcInRealMoney);
-			bitcoinsInWallet.subtract(bitcoinsToSell);
+			eurosWallet.set(result);
+			
+			connection.storeDineroGanadoCartera(eurosWallet.get());
+			connection.storeCantidadBitcoinsCartera(bitcoinsInWallet.get());
+
 		}
 		
 		textField_inversion.setText("");

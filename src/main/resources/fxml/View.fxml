@@ -36,7 +36,7 @@
           <NumberAxis fx:id="axisY_lineChart" label="Bitcoin value" side="LEFT" upperBound="60000.0" />
         </yAxis>
       </LineChart>
-      <HBox spacing="5.0" GridPane.rowIndex="2">
+      <HBox alignment="CENTER_LEFT" spacing="5.0" GridPane.rowIndex="2">
          <children>
             <Label text="Valor cartera" />
             <TextField fx:id="textField_valorCartera" editable="false" prefHeight="26.0" prefWidth="151.0" />
@@ -45,7 +45,7 @@
             <Insets bottom="5.0" left="10.0" right="5.0" top="5.0" />
          </GridPane.margin>
       </HBox>
-      <HBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+      <HBox alignment="CENTER_LEFT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
          <children>
             <Label text="Precio actual Bitcoin" />
             <TextField fx:id="textField_valorBitcoin" editable="false" prefHeight="26.0" prefWidth="165.0" />
@@ -54,7 +54,7 @@
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </GridPane.margin>
       </HBox>
-      <HBox spacing="5.0" GridPane.rowIndex="4">
+      <HBox alignment="CENTER_LEFT" spacing="5.0" GridPane.rowIndex="4">
          <children>
             <Label text="Inversión" />
             <TextField fx:id="textField_inversion" />
@@ -65,8 +65,8 @@
       </HBox>
       <HBox spacing="30.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
          <children>
-            <Button fx:id="button_comprar" mnemonicParsing="false" onAction="#on_buy" text="Comprar" />
-            <Button fx:id="button_vender" mnemonicParsing="false" onAction="#on_sell" text="Vender" />
+            <Button fx:id="button_comprar" mnemonicParsing="false" onAction="#on_buy" text="Comprar €" />
+            <Button fx:id="button_vender" mnemonicParsing="false" onAction="#on_sell" text="Vender BTC" />
          </children>
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -87,7 +87,7 @@
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </padding>
       </HBox>
-      <HBox prefHeight="24.0" prefWidth="328.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+      <HBox alignment="CENTER_LEFT" prefHeight="24.0" prefWidth="328.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
          <children>
             <Label text="Cartera de:" />
             <TextField fx:id="textField_name" editable="false" />
