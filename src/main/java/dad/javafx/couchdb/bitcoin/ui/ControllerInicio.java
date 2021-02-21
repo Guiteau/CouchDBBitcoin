@@ -62,7 +62,7 @@ public class ControllerInicio implements Initializable {
 	private CouchDB couchDB;
 
 	private Stage primaryStage;
-	
+
 	private boolean access;
 
 	public ControllerInicio() throws IOException {
@@ -73,7 +73,7 @@ public class ControllerInicio implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		
+
 		access = false;
 
 		couchDB = new CouchDB();
@@ -94,40 +94,43 @@ public class ControllerInicio implements Initializable {
 		return inicioView;
 	}
 
+	private void acceso(CarteraCouchDB cartera) {
+
+		Optional<CarteraCouchDB> optionalCartera = couchDB.getOptionalCartera(cartera.getNombre(),
+				cartera.getPassword());
+
+		if (optionalCartera.isPresent()) {
+
+			try {
+
+				controllerAplicacion = new ControllerAplicacion();
+				controllerAplicacion.setConnection(couchDB);
+				controllerAplicacion.prepare();
+				Scene escena = new Scene(controllerAplicacion.getRoot());
+				primaryStage.setScene(escena);
+				primaryStage.show();
+				access = true;
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		} else {
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Cuidado");
+			alert.setHeaderText("Error en los datos");
+			alert.setContentText("Usuario o contraseña incorrectos");
+			alert.showAndWait();
+		}
+
+	}
+
 	@FXML
 	void submitAction(ActionEvent event) {
-		
+
 		access = false;
 
 		CarteraCouchDB carteraFormulario = new CarteraCouchDB();
-
-		Function<CarteraCouchDB, Optional<CarteraCouchDB>> acceso = x -> {
-
-			Optional<CarteraCouchDB> optionalCartera = couchDB.getOptionalCartera(x.getNombre(), x.getPassword());
-			
-			if (optionalCartera.isPresent()) {
-
-				try {
-
-					controllerAplicacion = new ControllerAplicacion(optionalCartera.get(), couchDB);
-
-					access = true;
-
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
-			} else {
-				Alert alert = new Alert(AlertType.WARNING);
-				alert.setTitle("Cuidado");
-				alert.setHeaderText("Error en los datos");
-				alert.setContentText("Usuario o contraseña incorrectos");
-				alert.showAndWait();
-			}
-			
-			return optionalCartera;
-
-		};
 
 		if (radio_crearCuenta.isSelected()) {
 
@@ -138,8 +141,10 @@ public class ControllerInicio implements Initializable {
 			carteraFormulario.setDineroGanado(Double.parseDouble(textField_valorCartera.getText()));
 
 			carteraFormulario.setCantidadBitcoins(0);
-			
-			acceso.apply(carteraFormulario);
+
+			couchDB.setNewCartera(carteraFormulario);
+
+			acceso(carteraFormulario);
 
 		}
 
@@ -149,7 +154,7 @@ public class ControllerInicio implements Initializable {
 
 			carteraFormulario.setPassword(passwordField.getText());
 
-			acceso.apply(carteraFormulario);
+			acceso(carteraFormulario);
 
 			if (radio_borrarCuenta.isSelected()) {
 

@@ -85,14 +85,6 @@ public class CouchBitcoin {
 		support.firePropertyChange("euros", oldeuros, euros);
 	}
 
-	/*
-	@Override
-	public String toString() {
-		return "CouchBitcoin [id=" + cid + ", revision=" + revision + ", time=" + time + ", usd=" + usd + ", euros="
-				+ euros + "]";
-	}
-	*/
-
 	public void loadFromApiBitcoin(ApiBitcoin apibitcoin)
 	{
 		time = apibitcoin.getTime();

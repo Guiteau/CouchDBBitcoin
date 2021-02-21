@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({
     "_id",
     "_rev",
-    "Nombre",
     "Password",
     "cantidad_bitcoins",
     "dinero_ganado"
@@ -19,11 +18,10 @@ public class CarteraCouchDB {
 	
 	@JsonIgnoreProperties(ignoreUnknown = true)
 
-    @JsonProperty("_id")
-    private final String id = this.getNombre();
+	
     @JsonProperty("_rev")
     private String rev;
-    @JsonProperty("Nombre")
+    @JsonProperty("_id")
     private String nombre;
     @JsonProperty("Password")
     private String password;
@@ -57,10 +55,6 @@ public class CarteraCouchDB {
         this.dineroGanado = dineroGanado;
     }
 
-    @JsonProperty("_id")
-    public String getId() {
-        return id;
-    }
 
     @JsonProperty("_rev")
     public String getRev() {
@@ -72,12 +66,12 @@ public class CarteraCouchDB {
         this.rev = rev;
     }
 
-    @JsonProperty("Nombre")
+    @JsonProperty("_id")
     public String getNombre() {
         return nombre;
     }
 
-    @JsonProperty("Nombre")
+    @JsonProperty("_id")
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
@@ -111,5 +105,6 @@ public class CarteraCouchDB {
     public void setDineroGanado(double dineroGanado) {
         this.dineroGanado = dineroGanado;
     }
+    
 
 }
