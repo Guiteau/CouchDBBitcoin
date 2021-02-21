@@ -8,13 +8,19 @@ import javafx.stage.Stage;
 public class App extends Application{
 	
 	ControllerAplicacion controller;
+	
+	ControllerInicio controllerInicio;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-
-		controller = new ControllerAplicacion();
 		
-		Scene escena = new Scene(controller.getRoot(), 700, 400);
+		controllerInicio = new ControllerInicio();
+		
+		controllerInicio.setStage(primaryStage);
+
+//		controller = new ControllerAplicacion();
+		
+		Scene escena = new Scene(controllerInicio.getInicioView());
 		
 		primaryStage.getIcons().add(new Image("/icons/couchdb.png"));
 		primaryStage.setScene(escena);
@@ -28,3 +34,4 @@ public class App extends Application{
 	}
 
 }
+

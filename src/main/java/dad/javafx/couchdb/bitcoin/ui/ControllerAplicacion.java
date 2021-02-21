@@ -74,12 +74,12 @@ public class ControllerAplicacion implements Initializable {
 	
 	private CarteraCouchDB carteraCouchDB;
 
-	public ControllerAplicacion() throws IOException {
+	public ControllerAplicacion(CarteraCouchDB carteraCouchDB, CouchDB couchDB) throws IOException {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/View.fxml"));
 		loader.setController(this);
 		loader.load();
-		
-		carteraCouchDB = new CarteraCouchDB();
+		connection = couchDB;
+		this.carteraCouchDB = carteraCouchDB;
 	}
 
 	@Override
@@ -95,8 +95,6 @@ public class ControllerAplicacion implements Initializable {
 
 		series = new XYChart.Series<>();
 
-		connection = new CouchDB();
-		
 		bitcoinWallet.setText(String.valueOf(connection.getCurrentCartera().getCantidadBitcoins()));  //el label recibe la cantidad de Bitcoins en CouchDB
 		
 		walletValue = new SimpleDoubleProperty(connection.getCurrentCartera().getDineroGanado()); //el DoubleProperty recibe de entrada la cantidad ganada que lleva

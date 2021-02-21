@@ -59,17 +59,31 @@ public class CouchDB {
 	}
 	
 	
-	public void setUsuario(String usuario) {
-		this.usuario = usuario;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public void setCurrentCartera(CarteraCouchDB cartera) {
+	public boolean deleteCartera(String usuario, String password) {
 		
+		Optional<CarteraCouchDB> optionalCartera = getOptionalCartera(usuario, password);
+					
+		if(optionalCartera.isPresent()) {
+			
+			cr.remove(optionalCartera.get());
+			
+			return true;
+			
+		}
+		
+		return false;
+		
+	}
+
+	public void setNewCartera(CarteraCouchDB cartera) {
+			
 		cr.add(cartera);
+		
+	}
+	
+	public void setCartera(CarteraCouchDB cartera) {
+		
+		
 		
 	}
 	
