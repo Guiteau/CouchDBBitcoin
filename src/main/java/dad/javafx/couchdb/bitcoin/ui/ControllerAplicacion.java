@@ -92,41 +92,7 @@ public class ControllerAplicacion implements Initializable {
 
 		textField_valorCartera.textProperty().bindBidirectional(eurosWallet, new NumberStringConverter());
 		
-		textField_name.setText(connection.getUsuario());
-
-		/*
-		textField_valorBitcoin.textProperty().addListener((o, ov, nv) -> {
-			if (!nv.isEmpty()) {
-				walletValue.set(Double.parseDouble(label_bitcoinWallet.getText()) * Double.parseDouble(nv.toString()));
-				connection.storeDineroGanadoCartera(walletValue.get());
-			}
-
-		});
-*/
-			
-/*		
-		label_bitcoinWallet.textProperty().addListener((o, ov, nv) -> {
-			
-			if(Double.parseDouble(nv) != 0) {			
-
-				eurosWallet.set(Double.parseDouble(textField_valorBitcoin.getText()) * (Double.parseDouble(nv.toString())));
-				connection.storeDineroGanadoCartera(eurosWallet.get());
-				connection.storeCantidadBitcoinsCartera(Double.parseDouble(nv.toString()));
-						
-			}
-
-		});*/
-		
-/*		label_bitcoinWallet.textProperty().addListener((o, ov, nv) -> {
-			if (!nv.isEmpty()) {
-				eurosWallet.set(
-						Double.parseDouble(textField_valorBitcoin.getText()) * (Double.parseDouble(nv.toString())));
-				connection.storeDineroGanadoCartera(eurosWallet.get());
-				connection.storeCantidadBitcoinsCartera(Double.parseDouble(nv.toString()));
-			}
-
-		});*/
-		
+		textField_name.setText(connection.getUsuario());		
 
 		textField_inversion.setEditable(false);
 	}
