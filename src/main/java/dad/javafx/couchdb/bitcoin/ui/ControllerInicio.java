@@ -112,10 +112,7 @@ public class ControllerInicio implements Initializable {
 					controllerAplicacion = new ControllerAplicacion();
 					controllerAplicacion.setConnection(couchDB);
 					controllerAplicacion.prepare();
-					/*
-					 * Scene escena = new Scene(controllerAplicacion.getRoot());
-					 * primaryStage.setScene(escena); primaryStage.show();
-					 */
+
 					access = true;
 
 				} catch (IOException e) {
