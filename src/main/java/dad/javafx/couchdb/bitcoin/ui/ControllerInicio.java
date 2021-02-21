@@ -155,6 +155,8 @@ public class ControllerInicio implements Initializable {
 			carteraFormulario.setPassword(passwordField.getText());
 
 			acceso(carteraFormulario);
+			
+		}	
 
 			if (radio_borrarCuenta.isSelected()) {
 
@@ -190,7 +192,6 @@ public class ControllerInicio implements Initializable {
 
 		}
 
-	}
 
 	public void setStage(Stage stage) {
 
