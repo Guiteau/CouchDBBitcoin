@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.concurrent.CountDownLatch;
 
-import dad.javafx.couchdb.bitcoin.api.model.CarteraCouchDB;
 import dad.javafx.couchdb.bitcoin.api.model.CouchBitcoin;
 import dad.javafx.couchdb.bitcoin.db.CouchDB;
 import javafx.application.Platform;

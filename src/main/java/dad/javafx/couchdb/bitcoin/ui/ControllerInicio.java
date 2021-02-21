@@ -5,12 +5,8 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
-import java.util.function.Function;
-
-import org.ektorp.CouchDbConnector;
 
 import dad.javafx.couchdb.bitcoin.api.model.CarteraCouchDB;
-import dad.javafx.couchdb.bitcoin.db.CarteraRepository;
 import dad.javafx.couchdb.bitcoin.db.CouchDB;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
